@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EdenLeaf | Botanicals • Landscaping • Nursery</title>
+    <script>
+      // Single Page Application redirect for GitHub Pages deep linking
+      var path = window.location.pathname;
+      var repo = path.split('/')[1];
+      if (path.includes('/admin')) {
+        sessionStorage.setItem('edenleaf_initial_route', 'admin');
+      }
+      window.location.replace(window.location.origin + (repo ? '/' + repo + '/' : '/'));
+    </script>
+  </head>
+  <body>
+    <p>Redirecting to EdenLeaf Botanicals...</p>
+  </body>
+</html>
+
