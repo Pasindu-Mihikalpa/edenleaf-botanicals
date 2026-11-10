@@ -30,6 +30,36 @@ export const App: React.FC = () => {
     }
   }, [currentView, isAdminAuthenticated, setIsPasskeyModalOpen]);
 
+  // Hidden Admin Trigger Listeners (Only for Authorized Personnel):
+  // 1. Keyboard Shortcut: Ctrl + Shift + A (Cmd + Shift + A on Mac)
+  // 2. Query Parameter: ?admin=1
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('admin') === '1' || params.get('admin') === 'true') {
+        if (isAdminAuthenticated) {
+          useStore.getState().setCurrentView('admin');
+        } else {
+          setIsPasskeyModalOpen(true);
+        }
+      }
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        e.preventDefault();
+        if (isAdminAuthenticated) {
+          useStore.getState().setCurrentView('admin');
+        } else {
+          setIsPasskeyModalOpen(true);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isAdminAuthenticated, setIsPasskeyModalOpen]);
+
   // If in admin view and authenticated, render full AdminDashboard
   if (currentView === 'admin' && isAdminAuthenticated) {
     return (

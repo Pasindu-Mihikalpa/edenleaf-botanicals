@@ -87,7 +87,7 @@ export const AdminPasskeyModal: React.FC = () => {
             {error && (
               <div className="flex items-center gap-1.5 text-xs text-rose-400 justify-center">
                 <ShieldAlert className="w-3.5 h-3.5" />
-                <span>Invalid passkey. Default passkey: <strong>eden2026</strong></span>
+                <span>Invalid administrator passkey. Access denied.</span>
               </div>
             )}
 
@@ -99,10 +99,6 @@ export const AdminPasskeyModal: React.FC = () => {
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
-
-          <div className="pt-2 text-[11px] text-[#4B6E4A] font-mono">
-            Demo Passkey Hint: <strong className="text-[#DFB847]">eden2026</strong>
-          </div>
         </div>
       </div>
     </div>

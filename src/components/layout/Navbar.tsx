@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ShoppingBag, Sparkles, Menu, X, Leaf, ShieldCheck } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 import { TAXONOMY_CATEGORIES } from '../../data/categories';
@@ -6,6 +6,21 @@ import { TAXONOMY_CATEGORIES } from '../../data/categories';
 export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const logoClicksRef = useRef<number[]>([]);
+
+  const handleLogoClick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const now = Date.now();
+    logoClicksRef.current = [...logoClicksRef.current.filter((t) => now - t < 1200), now];
+    if (logoClicksRef.current.length >= 3) {
+      logoClicksRef.current = [];
+      if (isAdminAuthenticated) {
+        setCurrentView('admin');
+      } else {
+        setIsPasskeyModalOpen(true);
+      }
+    }
+  };
 
   const getCartCount = useStore((state) => state.getCartCount);
   const setIsCartOpen = useStore((state) => state.setIsCartOpen);
@@ -43,9 +58,9 @@ export const Navbar: React.FC = () => {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-            {/* Eden Leaf Brand Identity & Logo */}
+            {/* Eden Leaf Brand Identity & Logo (Tap 3x opens Admin for owner) */}
             <div
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              onClick={handleLogoClick}
               className="flex items-center gap-3.5 cursor-pointer group select-none"
             >
               {/* Logo Emblem - Frameless */}
@@ -109,20 +124,16 @@ export const Navbar: React.FC = () => {
               >
                 Conservatory
               </button>
-              <button
-                onClick={() => {
-                  if (isAdminAuthenticated) {
-                    setCurrentView('admin');
-                  } else {
-                    setIsPasskeyModalOpen(true);
-                  }
-                }}
-                className="px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider text-[#4B6E4A] hover:text-[#C59B27] hover:bg-[#F8F6F0] transition-all flex items-center gap-1.5"
-                title="Greenhouse Admin Portal"
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-[#C59B27]" />
-                <span>Admin</span>
-              </button>
+              {isAdminAuthenticated && (
+                <button
+                  onClick={() => setCurrentView('admin')}
+                  className="px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#0F2E1E] text-[#DFB847] hover:bg-[#1A4D34] transition-all flex items-center gap-1.5 shadow-sm border border-[#C59B27]/40"
+                  title="Switch to Admin Operations Terminal"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#DFB847]" />
+                  <span>Admin Terminal</span>
+                </button>
+              )}
             </nav>
 
             {/* Right Actions & Matchmaker */}
@@ -203,23 +214,21 @@ export const Navbar: React.FC = () => {
               Launch Plant Matchmaker
             </button>
 
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                if (isAdminAuthenticated) {
+            {isAdminAuthenticated && (
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
                   setCurrentView('admin');
-                } else {
-                  setIsPasskeyModalOpen(true);
-                }
-              }}
-              className="w-full text-left py-2.5 px-4 rounded-xl bg-white/60 border border-[#C59B27]/25 flex items-center justify-between text-[#0F2E1E] text-xs font-semibold"
-            >
-              <span className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-[#C59B27]" />
-                Admin Control Portal
-              </span>
-              <span className="font-mono text-[10px] text-[#C59B27] font-bold">Passkey: eden2026</span>
-            </button>
+                }}
+                className="w-full text-left py-2.5 px-4 rounded-xl bg-[#0F2E1E] border border-[#C59B27]/40 flex items-center justify-between text-[#DFB847] text-xs font-semibold shadow-sm"
+              >
+                <span className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-[#DFB847]" />
+                  Admin Control Portal
+                </span>
+                <span className="font-mono text-[10px] text-emerald-300 font-bold">Active</span>
+              </button>
+            )}
           </div>
 
           <div className="border-t border-[#C59B27]/25 pt-4 flex items-center justify-between text-xs text-[#4B6E4A]">

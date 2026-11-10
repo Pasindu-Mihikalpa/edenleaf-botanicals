@@ -158,9 +158,8 @@ test.describe('Eden Leaf Botanicals - Architecture & Interaction QA Suite', () =
   // Spec Ref: Passkey Authentication (eden2026) & Inventory Control
   // =========================================================================
   test('TC-6: Admin portal requires valid passkey to unlock terminal', async ({ page }) => {
-    // Click Admin Portal link in desktop navbar
-    const adminLink = page.getByRole('button', { name: /Admin/i }).first();
-    await adminLink.click();
+    // Trigger secret admin gate via keyboard shortcut (Ctrl+Shift+A)
+    await page.keyboard.press('Control+Shift+A');
 
     // Verify Passkey Modal opens
     await expect(page.getByText(/Admin Access Gate/i)).toBeVisible();

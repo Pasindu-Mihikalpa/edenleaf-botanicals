@@ -125,22 +125,27 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-emerald-400/70 gap-4">
-          <p>© {new Date().getFullYear()} Eden Leaf Botanicals. Growing Beauty, Naturally. All Rights Reserved.</p>
+          <p>
+            <span
+              onClick={() => setIsPasskeyModalOpen(true)}
+              className="cursor-default select-none hover:text-[#DFB847] transition-colors"
+              title=""
+            >
+              ©
+            </span>{' '}
+            {new Date().getFullYear()} Eden Leaf Botanicals. Growing Beauty, Naturally. All Rights Reserved.
+          </p>
 
           <div className="flex items-center gap-5">
-            <button
-              onClick={() => {
-                if (isAdminAuthenticated) {
-                  setCurrentView('admin');
-                } else {
-                  setIsPasskeyModalOpen(true);
-                }
-              }}
-              className="flex items-center gap-1.5 text-xs text-[#C59B27] hover:text-[#DFB847] transition-colors font-mono"
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>Admin Terminal</span>
-            </button>
+            {isAdminAuthenticated && (
+              <button
+                onClick={() => setCurrentView('admin')}
+                className="flex items-center gap-1.5 text-xs text-[#C59B27] hover:text-[#DFB847] transition-colors font-mono"
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Admin Terminal</span>
+              </button>
+            )}
 
             <button
               onClick={scrollToTop}
