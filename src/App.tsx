@@ -8,66 +8,26 @@ import { CartDrawer } from './components/cart/CartDrawer';
 import { OrderDispatchModal } from './components/order/OrderDispatchModal';
 import { PlantMatchmakerModal } from './components/matchmaker/PlantMatchmakerModal';
 import { QuickViewModal } from './components/catalog/QuickViewModal';
-import { AdminDashboard } from './components/admin/AdminDashboard';
-import { AdminPasskeyModal } from './components/admin/AdminPasskeyModal';
 import { Sparkles, ShoppingBag } from 'lucide-react';
 import { useStore } from './store/useStore';
+import { fetchCloudProducts } from './lib/supabase';
 
 export const App: React.FC = () => {
-  const currentView = useStore((state) => state.currentView);
-  const isAdminAuthenticated = useStore((state) => state.isAdminAuthenticated);
-  const setIsPasskeyModalOpen = useStore((state) => state.setIsPasskeyModalOpen);
   const setIsCartOpen = useStore((state) => state.setIsCartOpen);
   const setIsMatchmakerOpen = useStore((state) => state.setIsMatchmakerOpen);
   const getCartCount = useStore((state) => state.getCartCount);
+  const setProducts = useStore((state) => state.resetCatalog);
 
   const cartCount = getCartCount();
 
-  // If user navigated directly to /admin or currentView is admin but not yet authenticated
+  // On initial mount, sync live catalog from Supabase cloud database if configured
   useEffect(() => {
-    if (currentView === 'admin' && !isAdminAuthenticated) {
-      setIsPasskeyModalOpen(true);
-    }
-  }, [currentView, isAdminAuthenticated, setIsPasskeyModalOpen]);
-
-  // Hidden Admin Trigger Listeners (Only for Authorized Personnel):
-  // 1. Keyboard Shortcut: Ctrl + Shift + A (Cmd + Shift + A on Mac)
-  // 2. Query Parameter: ?admin=1
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('admin') === '1' || params.get('admin') === 'true') {
-        if (isAdminAuthenticated) {
-          useStore.getState().setCurrentView('admin');
-        } else {
-          setIsPasskeyModalOpen(true);
-        }
+    fetchCloudProducts().then((cloudProducts) => {
+      if (cloudProducts && cloudProducts.length > 0) {
+        useStore.setState({ products: cloudProducts });
       }
-    }
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
-        e.preventDefault();
-        if (isAdminAuthenticated) {
-          useStore.getState().setCurrentView('admin');
-        } else {
-          setIsPasskeyModalOpen(true);
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isAdminAuthenticated, setIsPasskeyModalOpen]);
-
-  // If in admin view and authenticated, render full AdminDashboard
-  if (currentView === 'admin' && isAdminAuthenticated) {
-    return (
-      <div className="min-h-screen bg-[#0A1C13] text-[#F8F6F0]">
-        <AdminDashboard />
-      </div>
-    );
-  }
+    });
+  }, []);
 
   return (
     <div className="relative min-h-screen bg-[#F8F6F0] text-[#0F2E1E] overflow-x-hidden selection:bg-[#C59B27] selection:text-[#0F2E1E]">
@@ -119,7 +79,6 @@ export const App: React.FC = () => {
       <OrderDispatchModal />
       <PlantMatchmakerModal />
       <QuickViewModal />
-      <AdminPasskeyModal />
     </div>
   );
 };

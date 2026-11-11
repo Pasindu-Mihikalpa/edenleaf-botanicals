@@ -154,26 +154,17 @@ test.describe('Eden Leaf Botanicals - Architecture & Interaction QA Suite', () =
   });
 
   // =========================================================================
-  // TC-6: Admin Management Center Passkey Security Gate
-  // Spec Ref: Passkey Authentication (eden2026) & Inventory Control
+  // TC-6: Quick View Modal & Specimen Inspection
+  // Spec Ref: Detailed Botanical Specimen Dialog & Care Specs
   // =========================================================================
-  test('TC-6: Admin portal requires valid passkey to unlock terminal', async ({ page }) => {
-    // Trigger secret admin gate via keyboard shortcut (Ctrl+Shift+A)
-    await page.keyboard.press('Control+Shift+A');
+  test('TC-6: Clicking cultivar card opens specimen Quick View dialog with care specs', async ({ page }) => {
+    // Click on the first plant card in the catalog
+    const firstPlantCard = page.locator('#catalog-section .glass-card-light').first();
+    await firstPlantCard.scrollIntoViewIfNeeded();
+    await firstPlantCard.click();
 
-    // Verify Passkey Modal opens
-    await expect(page.getByText(/Admin Access Gate/i)).toBeVisible();
-
-    // Enter passkey 'eden2026'
-    const passkeyInput = page.locator('input[type="password"]');
-    await passkeyInput.fill('eden2026');
-
-    // Click Unlock
-    const unlockBtn = page.getByRole('button', { name: /Unlock Admin Terminal/i });
-    await unlockBtn.click();
-
-    // Verify Admin Dashboard renders
-    await expect(page.getByText(/Gross Order Value/i)).toBeVisible();
-    await expect(page.getByText(/Catalog Cultivars/i)).toBeVisible();
+    // Verify Quick View modal appears with care attributes
+    await expect(page.getByText(/Botanical Specifications|Specimen Details/i).or(page.getByText(/Sunlight|Maintenance/i))).toBeVisible();
+    await expect(page.getByText(/Add to Cart/i)).toBeVisible();
   });
 });

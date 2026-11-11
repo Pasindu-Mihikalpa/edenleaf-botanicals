@@ -1,5 +1,5 @@
 import React from 'react';
-import { Mail, MapPin, Clock, ArrowUp, MessageSquare, ShieldCheck } from 'lucide-react';
+import { Mail, MapPin, Clock, ArrowUp, MessageSquare } from 'lucide-react';
 import { TAXONOMY_CATEGORIES } from '../../data/categories';
 import { useStore } from '../../store/useStore';
 
@@ -7,9 +7,6 @@ export const Footer: React.FC = () => {
   const setActiveCategory = useStore((state) => state.setActiveCategory);
   const dispatchPhone = useStore((state) => state.dispatchPhone);
   const dispatchEmail = useStore((state) => state.dispatchEmail);
-  const isAdminAuthenticated = useStore((state) => state.isAdminAuthenticated);
-  const setIsPasskeyModalOpen = useStore((state) => state.setIsPasskeyModalOpen);
-  const setCurrentView = useStore((state) => state.setCurrentView);
 
   const scrollToCatalogWithCategory = (catId: any) => {
     setActiveCategory(catId);
@@ -125,28 +122,9 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-emerald-400/70 gap-4">
-          <p>
-            <span
-              onClick={() => setIsPasskeyModalOpen(true)}
-              className="cursor-default select-none hover:text-[#DFB847] transition-colors"
-              title=""
-            >
-              ©
-            </span>{' '}
-            {new Date().getFullYear()} Eden Leaf Botanicals. Growing Beauty, Naturally. All Rights Reserved.
-          </p>
+          <p>© {new Date().getFullYear()} Eden Leaf Botanicals. Growing Beauty, Naturally. All Rights Reserved.</p>
 
           <div className="flex items-center gap-5">
-            {isAdminAuthenticated && (
-              <button
-                onClick={() => setCurrentView('admin')}
-                className="flex items-center gap-1.5 text-xs text-[#C59B27] hover:text-[#DFB847] transition-colors font-mono"
-              >
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Admin Terminal</span>
-              </button>
-            )}
-
             <button
               onClick={scrollToTop}
               className="flex items-center gap-1.5 text-[#DFB847] hover:text-white transition-colors font-bold"
